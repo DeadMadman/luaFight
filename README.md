@@ -27,7 +27,7 @@ If you have any questions then please let me know!
 
 Sidescroller (Kinda Cuphead)
 
-- Player 
+Player 
 - [ ] Jump (Mario jump)
 - [ ] Shoot
 - [ ] Animation
@@ -36,7 +36,7 @@ Sidescroller (Kinda Cuphead)
 - [ ] Die state
 - [ ] Jump state
 
-- Boss
+Boss
 - [ ] Shoot patterns
 - [ ] Move up and down (Optional)
 - [ ] Animations
@@ -44,7 +44,7 @@ Sidescroller (Kinda Cuphead)
 - [ ] Shoot state
 - [ ] Die state
 
--Game states
+Game states
 - [ ] Start game
 - [ ] Run game
 - [ ] Die 
