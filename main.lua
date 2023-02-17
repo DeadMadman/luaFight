@@ -1,61 +1,59 @@
 require("utility")
+require("player")
 
 function love.load()
-    playerTable = {}
-    playerTable.rect = createRect(0, 0, 0, 0)
-    playerTable.sprite = createSprite("player.png")
-    playerTable.speed  = createVec2(100, 100)
-
+    playerTable = createPlayer()
+     
     floorY = 200;
-    gravity = {}
-    gravity = createVec2(0, 90)
 
-    screenWidth = 300;
-    screenHeight = 300;
+    gravity = createVec2(0, 100)
+    canJump = false
+
+    screenSize = createRect(0, 0, 500, 500)
+
+    love.window.setMode(screenSize.w, screenSize.h)
 end
 
-function love.update(dt)
 
+function love.update(dt)
     local dVec2 = createVec2(0, 0)
     dVec2 = updateInput(dVec2)
     
     if playerTable.rect.y < floorY then
-        move(gravity)
+        playerTable.move(gravity, dt)
+    else
+        canJump = true
     end
 
-    move (dVec2)
+    playerTable.move(dVec2, dt)
 end
 
 function love.draw()
-    love.graphics.draw(player, 100 + playerTable.rect.x, 200 + playerTable.rect.y)
+    love.graphics.rectangle("fill", playerTable.rect.x, playerTable.rect.y, playerTable.rect.w, playerTable.rect.h)
+    love.graphics.draw(playerTable.sprite, playerTable.rect.x, playerTable.rect.y, 0, 1, 1, 20, 10)
 end
 
-function love.keypressed( key, scancode, isrepeat )
-    if scancoe == "escape" then
+function love.keypressed(key, scancode, isrepeat)
+    if scancode == "w" or "up" or "space" then
+        jump()
+    elseif scancode == "escape" then
         love.event.quit()
     end
  end
 
- function move(dVec2)
-    -- addbound chewck
-    playerTable.rect.x = playerTable.rect.x + dVec2.x
-    playerTable.rect.y = playerTable.rect.y + dVec2.y
+ function jump()
+    if canJump then
+        playerTable.move(createVec2(0, playerTable.speed.y), love.timer.getDelta())
+    end
  end
 
+ 
  function updateInput(dVec2)
-    if love.keyboard.isDown("d") then
+    if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
         dVec2.x = playerTable.speed.x
-    elseif love.keyboard.isDown("a") then
+    elseif love.keyboard.isDown("a") or love.keyboard.isDown("left") then
         dVec2.x = -playerTable.speed.x
-    elseif love.keyboard.isDown("w") then
-        dVec2.y = -playerTable.speed.y
     end
     return dVec2
  end
 
- function bounds(dVec2)
-    if dVec2.x < 0 or dVec2.x > screenWidth or dVec2.y < 0 or dVec2.y > screenHeight then
-        return false
-    end
-    return true
- end
