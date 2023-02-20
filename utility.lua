@@ -11,7 +11,7 @@ function createSprite(name)
     return love.graphics.newImage(name)
 end
 
-function createVec2(x, y)
+function createVec(x, y)
     local vec = {}
     vec.x = x
     vec.y = y
@@ -25,4 +25,10 @@ function clamp(num, min, max)
         return max
     end
     return num
+end
+
+function getSize(table)
+    local size
+    for _ in pairs(table) do size = size + 1 end
+    return size
 end
