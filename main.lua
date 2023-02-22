@@ -1,38 +1,32 @@
 require("utility")
 
-screenSize = createRect(0, 0, 500, 500)
+screenScale = 2
+screenSize = createRect(0, 0, 600, 350)
 gravity = createVec(0, 300)
-tileSize = 16
 
 function love.load()
-    
     player = require("player")
     
-    tiles = require("tile")
-    tiles.newTile(0, 0, tileSize, screenSize.w, 2)
-    tiles.newTile(screenSize.w - tileSize, 0, tileSize, screenSize.w, 2)
-    tiles.newTile(0, 0, screenSize.h, tileSize, 2)
-    --tiles.newTile(0, screenSize.h - tileSize, screenSize.h, tileSize, 2)
-    
-    tiles.newTile(400, 400, tileSize, tileSize, 1)
-    tiles.newTile(200, 400, tileSize, tileSize, 2)
+    map = require("map")
+    map.createMap()
     
     collisions = require("collisions")
 
-    love.window.setMode(screenSize.w, screenSize.h)
+    love.window.setMode(screenSize.w * screenScale, screenSize.h * screenScale)
 end
 
 function love.update(dt)
     player.update(dt)
-    tiles.update(dt)
+    map.update(dt)
     player.bullets.update(dt)
-
-    collisions.resolve(player, tiles, dt)
+    collisions.resolve(player, map, player.bullets, dt)
 end
 
 function love.draw()
+    love.graphics.scale(screenScale)
+
     player.draw()
-    tiles.draw()
+    map.draw()
     player.bullets.draw()
 end
 

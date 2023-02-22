@@ -1,49 +1,27 @@
-
-local tiles = {}
-tiles.currentTiles = {}
-
-function tiles.newTile(x, y, w, h, rectIndex)
+function createTile(x, y, w, h, rectIndex)
     local tile = {}
     tile.collider = createRect(x, y, w, h)
 
-    require("animation")
+    require("animator")
     tile.animator = createAnimator() 
+    tile.animtions = require("animations")
     local w = tile.collider.w
     local h = tile.collider.h
-    local tileRects = {
-        createRect(0,   0, w, h),
-        createRect(w,   0, w, h),
-        createRect(w*2, 0, w, h),
-        createRect(w*3, 0, w, h)
-    }
-    tile.animator.createAnimation("tilesets.png", "map", tileRects, 2)
+    tile.animator.createAnimation("tilesets.png", "map", tile.animtions.getTileRects(w, h), 1)
     tile.currentAnimation = tile.animator.setAnimation("map")
     tile.sprite = tile.currentAnimation.frames[rectIndex]
-    
-    table.insert(tiles.currentTiles, tile)
-end
 
-function tiles.updateTile(currentTile, dt)
+    function tile.updateTile(currentTile, dt)
    
-end
-
-function tiles.update(dt)
-    for _, tile in pairs(tiles.currentTiles) do
-        tiles.updateTile(tile, dt)
     end
-end
-
-function tiles.drawTile(currentTile)
-    love.graphics.rectangle("line", currentTile.collider.x, currentTile.collider.y, 
-            currentTile.collider.w, currentTile.collider.h)
-    love.graphics.draw(currentTile.animator.spriteSheet, currentTile.sprite, 
-            currentTile.collider.x, currentTile.collider.y)
-end
-
-function tiles.draw()
-    for _, tile in pairs(tiles.currentTiles) do
-        tiles.drawTile(tile)
+    
+    function tile.drawTile(currentTile)
+        love.graphics.rectangle("line", currentTile.collider.x, currentTile.collider.y, 
+                currentTile.collider.w, currentTile.collider.h)
+        love.graphics.draw(currentTile.animator.spriteSheet, currentTile.sprite, 
+                currentTile.collider.x, currentTile.collider.y)
     end
+    
+    return tile
 end
 
-return tiles

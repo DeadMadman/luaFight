@@ -4,7 +4,7 @@ bullets.currentBullets = {}
 function bullets.createBullet(x, y, w, h, dir)
     local bullet = {}
     bullet.collider = createRect(x, y, w, h)
-    require("animation")
+    require("animator")
     bullet.animator = createAnimator()
 
     local w = bullet.collider.w
@@ -15,14 +15,19 @@ function bullets.createBullet(x, y, w, h, dir)
         createRect(w*2, 0, w, h),
         createRect(w*3, 0, w, h)
     }
-    bullet.animator.createAnimation("playerSheet.png", "map", bulletRects, 2)
+    bullet.animator.createAnimation("tilesets.png", "map", bulletRects, 2)
     bullet.currentAnimation = bullet.animator.setAnimation("map")
     bullet.sprite = bullet.currentAnimation.frames[1]
     
     bullet.dir = dir
-    bullet.speed = 100
+    bullet.speed = 400
 
     table.insert(bullets.currentBullets, bullet)
+end
+
+function bullets.onCollision(index)
+    bullets.currentBullets[index] = nil
+    table.remove(bullets.currentBullets, index)
 end
 
 function bullets.updateBullet(currentBullet, dt)
