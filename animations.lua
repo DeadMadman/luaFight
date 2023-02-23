@@ -50,8 +50,8 @@ end
 function animations.getTileRects(w, h)
     local tileRects = {}
     for r = 0, 9 do
-        for c = 0, 9 do
-        table.insert(tileRects, createRect(w * r, h * c, w, h))
+        for c = 1, 10 do
+        table.insert(tileRects, createRect(w * c, h * r, w, h))
         end
     end
     return tileRects
