@@ -48,12 +48,12 @@ function animations.getShootRects(w, h)
 end
 
 function animations.getTileRects(w, h)
-    local tileRects = {
-        createRect(0,   0, w, h),
-        createRect(w,   0, w, h),
-        createRect(w*2, 0, w, h),
-        createRect(w*3, 0, w, h)
-    }
+    local tileRects = {}
+    for r = 0, 9 do
+        for c = 0, 9 do
+        table.insert(tileRects, createRect(w * r, h * c, w, h))
+        end
+    end
     return tileRects
 end
 

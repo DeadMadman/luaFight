@@ -1,7 +1,7 @@
 local player = {}
 
 player.scale = createVec(1, 1)
-player.collider = createRect(100, 300, 36 * player.scale.x, 40 * player.scale.y)
+player.collider = createRect(200, 300, 36 * player.scale.x, 40 * player.scale.y)
 player.offset = createVec(player.collider.w * 0.5, player.collider.w * 0.5)
 
 player.speed  = 200

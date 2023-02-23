@@ -1,7 +1,7 @@
 require("utility")
 
 screenScale = 2
-screenSize = createRect(0, 0, 600, 350)
+screenSize = createRect(0, 0, 704, 352)
 gravity = createVec(0, 300)
 
 function love.load()
