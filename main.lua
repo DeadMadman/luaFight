@@ -1,33 +1,18 @@
 require("utility")
 
-screenScale = 2
-screenSize = createRect(0, 0, 704, 352)
-gravity = createVec(0, 300)
-
 function love.load()
-    player = require("player")
-    
-    map = require("map")
-    map.createMap()
-    
-    collisions = require("collisions")
-
-    love.window.setMode(screenSize.w * screenScale, screenSize.h * screenScale)
+    game = require("game")
+    game.loadGameData()
 end
 
 function love.update(dt)
-    player.update(dt)
-    map.update(dt)
-    player.bullets.update(dt)
-    collisions.resolve(player, map, player.bullets, dt)
+    game.updateGameState(dt)
 end
 
 function love.draw()
-    love.graphics.scale(screenScale)
-
-    player.draw()
-    map.draw()
-    player.bullets.draw()
+    love.graphics.scale(game.screenScale)
+    --drawStartState()
+    game.drawGameState()
 end
 
 function love.keypressed(key, scancode, isrepeat)
@@ -35,5 +20,3 @@ function love.keypressed(key, scancode, isrepeat)
         love.event.quit()
     end
 end
-
-

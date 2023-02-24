@@ -4,8 +4,8 @@ function createAnimator()
 
     function animator.createAnimation(imageName, name, rects, duration)
         animator.spriteSheet = love.graphics.newImage(imageName)
-        animator.spriteSheet:setFilter("nearest", "linear")
-        animator.spriteSheet:setWrap("repeat", "repeat")
+        animator.spriteSheet:setFilter("nearest", "nearest")
+
     
         local animation = {}
         animation.frames =  {}

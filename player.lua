@@ -1,14 +1,14 @@
 local player = {}
 
-player.scale = createVec(1, 1)
-player.collider = createRect(200, 300, 36 * player.scale.x, 40 * player.scale.y)
+player.collider = createRect(32, 32, 36, 40 )
 player.offset = createVec(player.collider.w * 0.5, player.collider.w * 0.5)
 
 player.speed  = 200
 player.lookDir = 1
 player.velocity = createVec(0, 0)
 
-player.jumpForce = - (gravity.y + 300)
+player.gravity = createVec(0, 300)
+player.jumpForce = - (player.gravity.y + 300)
 player.jumpDuration = 0.5
 
 player.canJump = true
@@ -16,7 +16,8 @@ player.inJump = false
 player.jumpTimer = 0
 player.jumpAccumulator = 0
 
-player.bullets = require("bullet")
+require("bullet")
+player.bullets = createBullets()
 player.canShoot = true
 player.inShoot = false
 player.shootTimer = 0
@@ -29,9 +30,8 @@ require("animator")
 player.animator = createAnimator()
 player.animations = require("animations")
 
-local w = player.collider.w / player.scale.x
-local h = player.collider.h / player.scale.y
-
+local w = player.collider.w
+local h = player.collider.h
 player.animator.createAnimation("playerSheet.png", "idle", player.animations.getIdleRects(w, h), 6)
 player.animator.createAnimation("playerSheet.png", "run", player.animations.getRunRects(w, h), 16)
 player.animator.createAnimation("playerSheet.png", "shoot", player.animations.getShootRects(w, h), 16)
@@ -59,15 +59,16 @@ function player.update(dt)
         velocity.add(player.jump(dt))
     end
     velocity.add(inputDir)
-    velocity.add(gravity)
+    velocity.add(player.gravity)
     
     --collider here?
 
     player.updatePos(velocity, dt)
     player.velocity = velocity
-    clampBounds(player.collider, screenSize)
-    
+    --clampBounds(player.collider, screenSize)
+  
     player.updateAnimations(dt)
+    player.bullets.update(dt)
 end
 
 function player.jump(dt)
@@ -169,11 +170,12 @@ function player.onCollisionTile(offset)
 end
 
 function player.draw()
+    player.bullets.draw()
     --draw collider
-    --love.graphics.rectangle("line", player.collider.x, player.collider.y, player.collider.w, player.collider.h)
+    love.graphics.rectangle("line", player.collider.x, player.collider.y, player.collider.w, player.collider.h)
     --draw sprite
     love.graphics.draw(player.animator.spriteSheet, player.sprite, player.collider.x + player.offset.x, player.collider.y + player.offset.x, 
-                        0, player.scale.x * player.lookDir, player.scale.y, player.offset.x, player.offset.y)
+                        0, 1 * player.lookDir, 1, player.offset.x, player.offset.y)
 end
 
 return player

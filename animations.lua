@@ -47,11 +47,22 @@ function animations.getShootRects(w, h)
     return shootAnimRects
 end
 
+function animations.getBossIdleRects(w, h)
+    local idleAnimRects = {
+        createRect(0,   0, w, h),
+        createRect(w,   0, w, h),
+        createRect(w*2, 0, w, h),
+        createRect(w*3, 0, w, h)
+    }
+    return idleAnimRects
+end
+
 function animations.getTileRects(w, h)
     local tileRects = {}
-    for r = 0, 9 do
+    for r = 1, 10 do
         for c = 1, 10 do
-        table.insert(tileRects, createRect(w * c, h * r, w, h))
+            local index = r * 10 + c
+            table.insert(tileRects, createRect(w * (c - 1), h * (r - 1), w, h))
         end
     end
     return tileRects
