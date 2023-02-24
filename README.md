@@ -28,9 +28,9 @@ If you have any questions then please let me know!
 Sidescroller (Kinda Cuphead)
 
 Player 
-- [ ] Jump (Mario jump)
-- [ ] Shoot
-- [ ] Animation
+- [x] Jump (Mario jump)
+- [x] Shoot
+- [x] Animation
 - [ ] Idle state
 - [ ] Shoot state
 - [ ] Die state
