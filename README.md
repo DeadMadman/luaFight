@@ -1,5 +1,12 @@
 # luaFight
 
+Assets: 
+https://ansimuz.itch.io/warped-caves
+https://ansimuz.itch.io/super-grotto-escape-pack
+https://ansimuz.itch.io/sideview-sci-fi
+Arts adjustments and map export:
+https://pyxeledit.com/
+
 ## Description
 
 We would like you to do a test to evaluate your skill level.
