@@ -3,23 +3,9 @@ local collisions = {}
 function collisions.resolve(player, boss, tiles, dt)
     collisions.bulletDamageCollision(player.bullets, boss)
     collisions.bulletDamageCollision(boss.bullets, player)
-
-    for _, tile in pairs(tiles.currentTiles) do
-        collisions.playerTileCollision(player, tile)
+    for _, tile in pairs(tiles.collidableTiles) do
         collisions.bulletTileCollision(player.bullets, tile)
         collisions.bulletTileCollision(boss.bullets, tile)
-    end
-end
-
-function collisions.playerTileCollision(player, tile)
-    local a = player.collider
-    local b = tile.collider
-
-    local intersect = false
-    local offset = createVec(0,0)
-    intersect, offset = collisions.rectIntersect(a, b) 
-    if intersect then
-        player.onCollisionTile(offset)
     end
 end
 
@@ -27,41 +13,54 @@ function collisions.bulletTileCollision(bullets, tile)
     local b = tile.collider
     for index, bullet in pairs(bullets.currentBullets) do
         local a = bullet.collider
-        if collisions.rectIntersect(a, b) then
+        if collisions.rectRectIntersect(a, b) then
             bullets.onCollision(index)
         end
     end
 end
 
-function collisions.bulletDamageCollision(bullets, obj)
-    local b = obj.collider
+function collisions.bulletDamageCollision(bullets, other)
+    local b = other.collider
     for index, bullet in pairs(bullets.currentBullets) do
         local a = bullet.collider
-        if collisions.rectIntersect(a, b) then
-            obj.onCollisionBullet(true)
+        if collisions.rectRectIntersect(a, b) then
+            other.onCollisionBullet(true)
         end
     end
 end
 
-function collisions.rectIntersect(a, b)
-    local intersect = false
-    local offsetA = createVec(0, 0)
-
-    local intersect = (a.x + a.w >= b.x) and (a.x <= b.x + b.w) and 
-        	        (a.y + a.h >= b.y) and (a.y <= b.y + b.h)
+function collisions.rectRectIntersect(rect1, rect2)
+    local offset = createVec(0, 0)
+    local intersect = (rect1.x + rect1.w >= rect2.x) and (rect1.x <= rect2.x + rect2.w) and 
+        	        (rect1.y + rect1.h >= rect2.y) and (rect1.y <= rect2.y + rect2.h)
     if intersect then
-        if (a.x + a.w / 2) > (b.x + b.w / 2) then
-            offsetA.x = (b.x + b.w) - a.x
+        if (rect1.x + rect1.w / 2) > (rect2.x + rect2.w / 2) then
+            offset.x = (rect2.x + rect2.w) - rect1.x
         else
-            offsetA.x = b.x - (a.w + a.x)
+            offset.x = rect2.x - (rect1.w + rect1.x)
         end
-        if (a.y + a.h / 2) > (b.y + b.h / 2) then
-            offsetA.y = (b.y + b.h) - a.y
+        if (rect1.y + rect1.h / 2) > (rect2.y + rect2.h / 2) then
+            offset.y = (rect2.y + rect2.h) - rect1.y
         else
-            offsetA.y = b.y - (a.h + a.y)
+            offset.y = rect2.y - (rect1.h + rect1.y)
         end
     end
-    return intersect, offsetA
+    return intersect, offset
+end
+
+function collisions.lineRectIntersect(line, rect)
+    local rect = rect.collider
+    local left = collisions.lineLineIntersect(line, createRect(rect.x, rect.y, rect.x, rect.y + rect.h))
+    local right = collisions.lineLineIntersect(line, createRect(rect.x + rect.w, rect.y, rect.x + rect.w, rect.y + rect.h))
+    local top = collisions.lineLineIntersect(line, createRect(rect.x, rect.y, rect.x + rect.w, rect.y))
+    local bottom = collisions.lineLineIntersect(line, createRect(rect.x, rect.y + rect.h, rect.x + rect.w, rect.y + rect.h))
+    return left or right or top or bottom
+end
+
+function collisions.lineLineIntersect(line1, line2)
+    local intersection1 = ((line2.w-line2.x)*(line1.y-line2.y) - (line2.h-line2.y)*(line1.x-line2.x)) / ((line2.h-line2.y)*(line1.w-line1.x) - (line2.w-line2.x)*(line1.h-line1.y));
+    local intersection2 = ((line1.w-line1.x)*(line1.y-line2.y) - (line1.h-line1.y)*(line1.x-line2.x)) / ((line2.h-line2.y)*(line1.w-line1.x) - (line2.w-line2.x)*(line1.h-line1.y));
+    return intersection1 >= 0 and intersection1 <= 1 and intersection2 >= 0 and intersection2 <= 1
 end
 
 return collisions

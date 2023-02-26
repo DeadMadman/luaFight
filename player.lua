@@ -1,6 +1,7 @@
 local player = {}
 
-player.collider = createRect(32, 32, 36, 40 )
+require("collisions")
+player.collider = createRect(32, 32, 36, 40)
 player.offset = createVec(player.collider.w * 0.5, player.collider.w * 0.5)
 
 player.speed  = 200
@@ -17,25 +18,25 @@ player.jumpTimer = 0
 player.jumpAccumulator = 0
 
 require("bullet")
-player.bullets = createBullets()
+player.bullets = createBullets("bullet.png")
 player.canShoot = true
 player.inShoot = false
 player.shootTimer = 0
 player.fireRate = 0.2
 
-player.hp = 5
+require("health")
+player.health = createHealth(5) 
 
 --Anims
 require("animator")
 player.animator = createAnimator()
-player.animations = require("animations")
 
 local w = player.collider.w
 local h = player.collider.h
-player.animator.createAnimation("playerSheet.png", "idle", player.animations.getIdleRects(w, h), 6)
-player.animator.createAnimation("playerSheet.png", "run", player.animations.getRunRects(w, h), 16)
-player.animator.createAnimation("playerSheet.png", "shoot", player.animations.getShootRects(w, h), 16)
-player.animator.createAnimation("playerSheet.png", "jump", player.animations.getJumpRects(w, h), 12)
+player.animator.createAnimation("playerSheet.png", "idle", player.animator.getStrip(w, h, 0, 4), 6)
+player.animator.createAnimation("playerSheet.png", "run", player.animator.getStrip(w, h, h, 10), 16)
+player.animator.createAnimation("playerSheet.png", "shoot", player.animator.getStrip(w, h, h * 2, 4), 16)
+player.animator.createAnimation("playerSheet.png", "jump", player.animator.getStrip(w, h, h * 3, 6), 12)
 
 player.currentAnimation = player.animator.setAnimation("idle")
 player.sprite = player.currentAnimation.currentFrame
@@ -46,27 +47,35 @@ function player.updatePos(velocity, dt)
     player.collider.y = player.collider.y + velocity.y
 end
 
-function player.update(dt)
+function player.update(dt, tiles)
+    if not player.health.update(dt) then
+        return
+    end
+
     if player.inShoot then
         player.shootCooldown(dt)
     end
-
+    
     local velocity = createVec(0, 0)
     local inputDir = player.updateInput()
     inputDir.multiplyScalar(player.speed)
     
+    velocity.add(inputDir)
+    velocity.add(player.gravity)
+
+    --clampBounds(player.collider, screenSize)
+
+    player.onCollisionBottom(tiles, velocity)
+    player.onCollison(tiles)
+
     if player.inJump then
         velocity.add(player.jump(dt))
     end
-    velocity.add(inputDir)
-    velocity.add(player.gravity)
-    
-    --collider here?
+    player.onCollisionTop(tiles)
 
     player.updatePos(velocity, dt)
     player.velocity = velocity
-    --clampBounds(player.collider, screenSize)
-  
+
     player.updateAnimations(dt)
     player.bullets.update(dt)
 end
@@ -90,11 +99,15 @@ function player.jump(dt)
     return velocity
 end
 
+function player.cancelJump()
+    player.inJump = false
+    player.jumpTimer = 0
+end
+
 function player.shoot()
-    local bulletSize = createVec(4, 4)
+    local bulletSize = createVec(15, 7)
     player.bullets.createBullet(player.collider.x + player.collider.w / 2 + player.collider.w / 2 * player.lookDir - bulletSize.x, 
-                                player.collider.y + player.collider.h / 2 - bulletSize.y * 2, 
-                                bulletSize.x, bulletSize.y, createVec(player.lookDir, 0))
+                                player.collider.y + player.collider.h / 2 - bulletSize.y - 4, bulletSize.x, bulletSize.y, createVec(player.lookDir, 0))
     player.canShoot = false
     player.inShoot = true
 end
@@ -110,21 +123,24 @@ end
 
 function player.updateInput()
     local dir = createVec(0, 0)
-    if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
-        dir.x = dir.x + 1
-    end
-    if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
-        dir.x = dir.x - 1
-    end
-    if love.keyboard.isDown("w") or love.keyboard.isDown("up") or love.keyboard.isDown("space") then
-        if player.canJump then
-            player.canJump = false
-            player.inJump = true
-        end
-    end
+
     if love.keyboard.isDown("q") or love.keyboard.isDown("s") or love.keyboard.isDown("down") then
         if player.canShoot then
             player.shoot()
+        end
+    else
+        if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
+            dir.x = dir.x + 1
+        end
+        if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
+            dir.x = dir.x - 1
+        end
+        if love.keyboard.isDown("w") or love.keyboard.isDown("up") or love.keyboard.isDown("space") then
+            if player.canJump and not player.inJump then
+                player.canJump = false
+                player.inJump = true
+                player.collider.y = player.collider.y - 2
+            end
         end
     end
     return dir
@@ -145,22 +161,17 @@ function player.updateAnimations(dt)
         player.currentAnimation = player.animator.setAnimation("idle")
     end
     player.sprite = player.animator.updateFrame(player.currentAnimation, dt)
-    
 end
 
 function player.onCollisionBullet(takeDamage)
     if takeDamage then
-        player.hp = player.hp - 1
-        if player.hp <= 0 then
-            print("dead")
-        end
+        player.health.reduceHealth()
     end
 end
 
-function player.onCollisionTile(offset)
-    player.canJump = true
+function player.offsetCollision(offset)
     local min = math.min(math.abs(offset.x), math.abs(offset.y))
-    if math.abs(offset.x) == min then
+    if math.abs(offset.x) <= min then
         offset.y = 0
     else
         offset.x = 0
@@ -169,13 +180,46 @@ function player.onCollisionTile(offset)
     player.collider.y = player.collider.y + offset.y
 end
 
+function player.onCollisionTop(tiles)
+    local upLine = createRect(player.collider.x + (player.collider.w / 2), player.collider.y + (player.collider.h / 2), player.collider.x + (player.collider.w / 2), player.collider.y)
+    for _, tile in pairs(tiles) do
+        if collisions.lineRectIntersect(upLine, tile) then
+            player.cancelJump()
+        end
+    end
+end
+
+function player.onCollisionBottom(tiles, velocity)
+    local downLine = createRect(player.collider.x + (player.collider.w / 2), player.collider.y + (player.collider.h / 2), player.collider.x + (player.collider.w / 2), player.collider.y + player.collider.h)
+    for _, tile in pairs(tiles) do
+        if collisions.lineRectIntersect(downLine, tile) then
+            player.canJump = true
+            velocity.y = 0
+            local difference = (player.collider.y + player.collider.h) - (tile.collider.y);
+            player.collider.y = player.collider.y - difference;
+        end
+    end
+end
+
+function player.onCollison(tiles)
+    for _, tile in pairs(tiles) do
+        local intersect = false
+        local offset = createVec(0, 0)
+        intersect, offset = collisions.rectRectIntersect(player.collider, tile.collider)
+        if intersect then
+            player.offsetCollision(offset)
+        end
+    end
+end
+
 function player.draw()
+    player.health.drawState("Player DEAD")
+
     player.bullets.draw()
-    --draw collider
-    love.graphics.rectangle("line", player.collider.x, player.collider.y, player.collider.w, player.collider.h)
-    --draw sprite
+    player.health.setBlinkColor()
     love.graphics.draw(player.animator.spriteSheet, player.sprite, player.collider.x + player.offset.x, player.collider.y + player.offset.x, 
                         0, 1 * player.lookDir, 1, player.offset.x, player.offset.y)
+    player.health.resetBlinkColor()
 end
 
 return player

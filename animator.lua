@@ -6,7 +6,6 @@ function createAnimator()
         animator.spriteSheet = love.graphics.newImage(imageName)
         animator.spriteSheet:setFilter("nearest", "nearest")
 
-    
         local animation = {}
         animation.frames =  {}
         for index, value in ipairs(rects) do
@@ -14,7 +13,6 @@ function createAnimator()
             animation.frames[index] = rect
             animation.size = index
         end
-    
         animation.currentFrameIndex = 1
         animation.currentFrame = animation.frames[animation.currentFrameIndex]
     
@@ -55,6 +53,24 @@ function createAnimator()
         animator.animations[name].currentFrameIndex = 1
         animator.animations[name].currentFrame = 1
         animator.animations[name].currentTime = 0
+    end
+
+    function animator.getStrip(w, h, y, frames)
+        local rects = {}
+        for i = 1, frames do
+            table.insert(rects, createRect(w * (i - 1), y, w, h))
+        end
+        return rects
+    end
+    
+    function animator.getTileRects(w, h)
+        local tileRects = {}
+        for r = 1, 13 do
+            for c = 1, 10 do
+                table.insert(tileRects, createRect(w * (c - 1), h * (r - 1), w, h))
+            end
+        end
+        return tileRects
     end
 
     return animator
