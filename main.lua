@@ -1,18 +1,17 @@
-require("utility")
+require("scripts/utility")
 
 local screenScale = 2
 screenSize = createRect(0, 0, 704, 352)
 
 function love.load()
-
-    audio = require("audio")
+    audio = require("scripts/audio")
     audio.load()
-    player = require("player")
-    boss = require("boss")
-    map = require("map")
+    player = require("scripts/player")
+    boss = require("scripts/boss")
+    map = require("scripts/map")
     map.createMap()
     
-    collisions = require("collisions")
+    collisions = require("scripts/collisions")
     love.window.setMode(screenSize.w * screenScale, screenSize.h * screenScale)
 end
 
@@ -20,8 +19,6 @@ function love.update(dt)
     audio.update()
     player.update(dt, map.collidableTiles)
     boss.update(dt)
-    map.update(dt)
-   
     collisions.resolve(player, boss, map, dt)
 end
 

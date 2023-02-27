@@ -1,6 +1,6 @@
 local player = {}
 
-require("collisions")
+require("scripts/collisions")
 player.collider = createRect(32, 32, 36, 40)
 player.offset = createVec(player.collider.w * 0.5, player.collider.w * 0.5)
 
@@ -18,27 +18,22 @@ player.jumpTimer = 0
 player.fixedTimeStepAccumulator = 0
 player.fixedTimeStep = 0.001
 
-require("bullet")
-player.bullets = createBullets("bullet.png")
-player.canShoot = true
-player.inShoot = false
-player.shootTimer = 0
-player.fireRate = 0.2
-
-require("health")
+require("scripts/shooting")
+player.shooting = createShooting("assets/bullet.png", 0.2)
+require("scripts/health")
 player.health = createHealth(5, "Player Dead") 
-player.health.createDisplay()
+player.health.createHealthDisplay()
 
 --Anims
-require("animator")
+require("scripts/animator")
 player.animator = createAnimator()
 
 local w = player.collider.w
 local h = player.collider.h
-player.animator.createAnimation("playerSheet.png", "idle", player.animator.getStrip(w, h, 0, 4), 6)
-player.animator.createAnimation("playerSheet.png", "run", player.animator.getStrip(w, h, h, 10), 16)
-player.animator.createAnimation("playerSheet.png", "shoot", player.animator.getStrip(w, h, h * 2, 4), 16)
-player.animator.createAnimation("playerSheet.png", "jump", player.animator.getStrip(w, h, h * 3, 6), 12)
+player.animator.createAnimation("assets/playerSheet.png", "idle", player.animator.getStrip(w, h, 0, 4), 6)
+player.animator.createAnimation("assets/playerSheet.png", "run", player.animator.getStrip(w, h, h, 10), 16)
+player.animator.createAnimation("assets/playerSheet.png", "shoot", player.animator.getStrip(w, h, h * 2, 4), 16)
+player.animator.createAnimation("assets/playerSheet.png", "jump", player.animator.getStrip(w, h, h * 3, 6), 12)
 
 player.currentAnimation = player.animator.setAnimation("idle")
 player.sprite = player.currentAnimation.currentFrame
@@ -53,33 +48,27 @@ function player.update(dt, tiles)
     if not player.health.update(dt) then
         return
     end
+    player.shooting.update(dt) 
 
-    if player.inShoot then
-        player.shootCooldown(dt)
-    end
-    
     local velocity = createVec(0, 0)
     local inputDir = player.updateInput()
     inputDir.multiplyScalar(player.speed)
     
     velocity.add(inputDir)
     velocity.add(player.gravity)
-
-    --clampBounds(player.collider, screenSize)
-
+    
     player.onCollisionBottom(tiles, velocity)
     player.onCollison(tiles)
-
+    
     if player.inJump then
         velocity.add(player.jump(dt))
     end
     player.onCollisionTop(tiles)
-
+    
     player.updatePos(velocity, dt)
     player.velocity = velocity
-
+    
     player.updateAnimations(dt)
-    player.bullets.update(dt)
 end
 
 function player.jump(dt)
@@ -106,29 +95,12 @@ function player.cancelJump()
     player.jumpTimer = 0
 end
 
-function player.shoot()
-    local bulletSize = createVec(15, 7)
-    player.bullets.createBullet(player.collider.x + player.collider.w / 2 + player.collider.w / 2 * player.lookDir - bulletSize.x, 
-                                player.collider.y + player.collider.h / 2 - bulletSize.y - 4, bulletSize.x, bulletSize.y, createVec(player.lookDir, 0))
-    player.canShoot = false
-    player.inShoot = true
-end
-
-function player.shootCooldown(dt)
-    player.shootTimer = player.shootTimer + dt
-    if player.shootTimer >= player.fireRate then
-        player.canShoot = true
-        player.inShoot = false
-        player.shootTimer = 0
-    end
-end
-
 function player.updateInput()
     local dir = createVec(0, 0)
 
     if love.keyboard.isDown("q") or love.keyboard.isDown("s") or love.keyboard.isDown("down") then
-        if player.canShoot then
-            player.shoot()
+        if player.shooting.canShoot then
+            player.shooting.shoot(player)
         end
     else
         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
@@ -151,7 +123,7 @@ function player.updateInput()
 function player.updateAnimations(dt)
     if player.inJump then
         player.currentAnimation = player.animator.setAnimation("jump")
-    elseif player.inShoot then
+    elseif player.shooting.inShoot then
         player.currentAnimation = player.animator.setAnimation("shoot")
     elseif player.velocity.x > 0 then
         player.lookDir = 1
@@ -216,8 +188,7 @@ end
 
 function player.draw()
     player.health.draw()
-
-    player.bullets.draw()
+    player.shooting.draw()
     player.health.setBlinkColor()
     love.graphics.draw(player.animator.spriteSheet, player.sprite, player.collider.x + player.offset.x, player.collider.y + player.offset.x, 
                         0, 1 * player.lookDir, 1, player.offset.x, player.offset.y)

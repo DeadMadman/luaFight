@@ -23,7 +23,7 @@ end
 
 function createHealthDisplay(curernt, total)
     local label = {}
-    label.bgImage = love.graphics.newImage("stone.png")
+    label.bgImage = love.graphics.newImage("assets/stone.png")
     label.bgImage:setFilter("nearest", "nearest")
     label.quad = love.graphics.newQuad(0, 0, label.bgImage:getWidth(), label.bgImage:getHeight(), label.bgImage:getDimensions())
     

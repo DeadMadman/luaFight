@@ -1,11 +1,11 @@
 local collisions = {}
 
 function collisions.resolve(player, boss, tiles, dt)
-    collisions.bulletDamageCollision(player.bullets, boss)
-    collisions.bulletDamageCollision(boss.bullets, player)
+    collisions.bulletDamageCollision(player.shooting.bullets, boss)
+    collisions.bulletDamageCollision(boss.shooting.bullets, player)
     for _, tile in pairs(tiles.collidableTiles) do
-        collisions.bulletTileCollision(player.bullets, tile)
-        collisions.bulletTileCollision(boss.bullets, tile)
+        collisions.bulletTileCollision(player.shooting.bullets, tile)
+        collisions.bulletTileCollision(boss.shooting.bullets, tile)
     end
 end
 
@@ -25,6 +25,7 @@ function collisions.bulletDamageCollision(bullets, other)
         local a = bullet.collider
         if collisions.rectRectIntersect(a, b) then
             other.onCollisionBullet(true)
+            bullets.onCollision(index)
         end
     end
 end

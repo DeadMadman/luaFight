@@ -7,10 +7,10 @@ function createHealth(hp, text)
     health.inBlink = false
     health.isDead = false
 
-    require("ui")
+    require("scripts/ui")
     health.label = createLabel(text)
    
-    function health.createDisplay()
+    function health.createHealthDisplay()
         health.display = createHealthDisplay(health.hp, health.hp)
     end
 

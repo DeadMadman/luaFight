@@ -1,15 +1,15 @@
-
-function createBullets(fileName)
+function createBullets(fileName, size)
     local bullets = {}
     bullets.currentBullets = {}
+    bullets.size = createVec(15, 7)
 
-    function bullets.createBullet(x, y, w, h, dir)
+    function bullets.createBullet(x, y, dir)
         local bullet = {}
-        bullet.collider = createRect(x, y, w, h)
+        bullet.collider = createRect(x, y, bullets.size.x, bullets.size.y)
         bullet.offset = createVec(0, 0)
         bullet.speed = 400
 
-        require("animator")
+        require("scripts/animator")
         bullet.animator = createAnimator()
         local w = bullet.collider.w
         local h = bullet.collider.h
@@ -23,7 +23,7 @@ function createBullets(fileName)
             bullet.lookDir = -1
             bullet.offset.x = w
         end
-        bullet.audio = require("audio")
+        bullet.audio = require("scripts/audio")
         bullet.audio.playShootSound()
 
         table.insert(bullets.currentBullets, bullet)

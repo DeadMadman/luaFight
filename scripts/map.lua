@@ -81,8 +81,8 @@ map.background = {
 }
     
 function map.createMap()
-    require("tile")
-    map.bg.spriteSheet = love.graphics.newImage("bg.png")
+    require("scripts/tile")
+    map.bg.spriteSheet = love.graphics.newImage("assets/bg.png")
     map.bg.spriteSheet:setFilter("nearest", "nearest")
     map.bg.spriteSheet:setWrap("repeat", "repeat")
     map.bg.quad = love.graphics.newQuad(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), map.bg.spriteSheet:getDimensions())
@@ -115,12 +115,6 @@ function map.draw()
     end
     for _, tile in pairs(map.decorationTiles) do
         tile.drawTile(tile)
-    end
-end
-
-function map.update(dt)
-    for _, tile in pairs(map.collidableTiles) do
-        tile.updateTile(tile, dt)
     end
 end
 
