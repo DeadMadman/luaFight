@@ -15,7 +15,8 @@ player.jumpDuration = 0.5
 player.canJump = true
 player.inJump = false
 player.jumpTimer = 0
-player.jumpAccumulator = 0
+player.fixedTimeStepAccumulator = 0
+player.fixedTimeStep = 0.001
 
 require("bullet")
 player.bullets = createBullets("bullet.png")
@@ -83,11 +84,11 @@ end
 
 function player.jump(dt)
     local velocity = createVec(0, 0)
-    player.jumpAccumulator = player.jumpAccumulator + dt
+    player.fixedTimeStepAccumulator = player.fixedTimeStepAccumulator + dt
 
-    while player.jumpAccumulator > 0.016 do
-        player.jumpAccumulator = player.jumpAccumulator - 0.016
-        player.jumpTimer = player.jumpTimer + 0.016 / player.jumpDuration
+    while player.fixedTimeStepAccumulator > player.fixedTimeStep do
+        player.fixedTimeStepAccumulator = player.fixedTimeStepAccumulator - player.fixedTimeStep
+        player.jumpTimer = player.jumpTimer + player.fixedTimeStep / player.jumpDuration
         velocity.y = - player.jumpTimer * player.jumpTimer + 1
         velocity.y = velocity.y * player.jumpForce
     
