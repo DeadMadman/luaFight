@@ -25,7 +25,8 @@ player.shootTimer = 0
 player.fireRate = 0.2
 
 require("health")
-player.health = createHealth(5) 
+player.health = createHealth(5, "Player Dead") 
+player.health.createDisplay()
 
 --Anims
 require("animator")
@@ -213,7 +214,7 @@ function player.onCollison(tiles)
 end
 
 function player.draw()
-    player.health.drawState("Player DEAD")
+    player.health.draw()
 
     player.bullets.draw()
     player.health.setBlinkColor()

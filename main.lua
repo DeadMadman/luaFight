@@ -1,9 +1,10 @@
 require("utility")
 
-screenScale = 2
+local screenScale = 2
 screenSize = createRect(0, 0, 704, 352)
 
 function love.load()
+
     audio = require("audio")
     audio.load()
     player = require("player")

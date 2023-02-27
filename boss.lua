@@ -13,10 +13,10 @@ boss.bullets = createBullets("bulletBoss.png")
 boss.canShoot = true
 boss.inShoot = false
 boss.shootTimer = 0
-boss.fireRate = 1
+boss.fireRate = 0.8
 
 require("health")
-boss.health = createHealth(5)
+boss.health = createHealth(5, "Bug Dead")
 
 require("animator")
 boss.animator = createAnimator()
@@ -87,10 +87,7 @@ function boss.onCollisionBullet(takeDamage)
 end
 
 function boss.draw()
-    if boss.health.isDead then
-        boss.health.drawState("Bug DEAD")
-    end
-
+    boss.health.draw()
     boss.bullets.draw()
     boss.health.setBlinkColor()
     love.graphics.draw(boss.animator.spriteSheet, boss.sprite, boss.collider.x + boss.offset.x, boss.collider.y + boss.offset.x, 

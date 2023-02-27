@@ -85,7 +85,7 @@ function map.createMap()
     map.bg.spriteSheet = love.graphics.newImage("bg.png")
     map.bg.spriteSheet:setFilter("nearest", "nearest")
     map.bg.spriteSheet:setWrap("repeat", "repeat")
-    map.bg.quad = love.graphics.newQuad(0, 0, screenSize.w, screenSize.h, map.bg.spriteSheet:getDimensions())
+    map.bg.quad = love.graphics.newQuad(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), map.bg.spriteSheet:getDimensions())
 
     map.createLayer(map.collision, map.collidableTiles)
     map.createLayer(map.decoration, map.decorationTiles)

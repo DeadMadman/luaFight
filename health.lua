@@ -1,11 +1,18 @@
 
-function createHealth(hp)
+function createHealth(hp, text)
     local health = {}
     
     health.hp = hp
     health.blinkTimer = 0
     health.inBlink = false
     health.isDead = false
+
+    require("ui")
+    health.label = createLabel(text)
+   
+    function health.createDisplay()
+        health.display = createHealthDisplay(health.hp, health.hp)
+    end
 
     function health.blink(dt)
         health.blinkTimer = health.blinkTimer + dt
@@ -50,11 +57,13 @@ function createHealth(hp)
         end
     end
 
-    function health.drawState(text)
+    function health.draw()
+        if health.display ~= nil then
+            health.display.draw(health.hp)
+        end
         if health.isDead then
-            love.graphics.print(text, screenSize.w / 2, screenSize.h / 2)
+            health.label.draw()
         end
     end
-
     return health
 end
