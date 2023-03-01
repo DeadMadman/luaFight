@@ -1,13 +1,16 @@
 # luaFight
 
-** Controls: 
+## Controls: 
 
 W / Space -> jump
+
 A -> left
+
 D -> right
+
 S / Q -> shoot
 
-** Assets: 
+## Assets: 
 
 https://ansimuz.itch.io/warped-caves
 
