@@ -1,6 +1,7 @@
 # luaFight
 
-[---> Download game <---](https://github.com/DeadMadman/luaFight/files/10861574/luaFight.zip)
+[luaFight.zip](https://github.com/DeadMadman/luaFight/files/10861594/luaFight.zip)
+
 
 ![image](https://user-images.githubusercontent.com/31730144/222148067-8d7abe36-2dd1-4d7a-a2c2-27f50e3c7048.png)
 
