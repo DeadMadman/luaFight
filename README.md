@@ -1,9 +1,10 @@
 # luaFight
 
+[Download game](https://github.com/DeadMadman/luaFight/files/10861287/luaFight.zip)
+
+![image](https://user-images.githubusercontent.com/31730144/222147920-9f358f6a-6712-4940-a8e3-7e60c405d3b9.png)
+
 ## Controls: 
-
-[luaFight.zip](https://github.com/DeadMadman/luaFight/files/10861287/luaFight.zip)
-
 
 W / Space -> jump
 
