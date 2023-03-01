@@ -189,6 +189,7 @@ end
 function player.draw()
     player.health.draw()
     player.shooting.draw()
+    
     player.health.setBlinkColor()
     love.graphics.draw(player.animator.spriteSheet, player.sprite, player.collider.x + player.offset.x, player.collider.y + player.offset.x, 
                         0, 1 * player.lookDir, 1, player.offset.x, player.offset.y)

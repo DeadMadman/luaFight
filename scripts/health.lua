@@ -9,6 +9,8 @@ function createHealth(hp, text)
 
     require("scripts/ui")
     health.label = createLabel(text)
+
+    health.audio = require("scripts/audio")
    
     function health.createHealthDisplay()
         health.display = createHealthDisplay(health.hp, health.hp)
@@ -16,11 +18,12 @@ function createHealth(hp, text)
 
     function health.blink(dt)
         health.blinkTimer = health.blinkTimer + dt
-        if health.blinkTimer >= 0.1 then
+        if health.blinkTimer >= 0.2 then
             health.inBlink = false
             health.blinkTimer = 0
         end
     end
+    
     function health.update(dt)
         if health.isDead then
             if love.keyboard.isDown("r") then
@@ -50,6 +53,7 @@ function createHealth(hp, text)
         if not health.inBlink then
             health.inBlink = true
             health.hp = health.hp - 1
+            health.audio.playHitSound()
             if health.hp <= 0 then
                 health.isDead = true
             end 
