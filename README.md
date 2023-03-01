@@ -2,6 +2,9 @@
 
 ## Controls: 
 
+[luaFight.zip](https://github.com/DeadMadman/luaFight/files/10861287/luaFight.zip)
+
+
 W / Space -> jump
 
 A -> left
