@@ -100,7 +100,7 @@ function player.updateInput()
 
     if love.keyboard.isDown("q") or love.keyboard.isDown("s") or love.keyboard.isDown("down") then
         if player.shooting.canShoot then
-            player.shooting.shoot(player)
+            player.shooting.shoot(player, 1, 14)
         end
     else
         if love.keyboard.isDown("d") or love.keyboard.isDown("right") then

@@ -7,11 +7,52 @@ function createShooting(name, fireRate)
     require("scripts/bullet")
     shooting.bullets = createBullets(name)
 
-    function shooting.shoot(player)
+    function shooting.shoot(obj, style, yOffset)
+
+        if style == 3 then
+            shooting.shoot3(obj, yOffset)
+        elseif style == 2 then
+            shooting.shoot2(obj, yOffset)
+        else
+            shooting.shoot1(obj, yOffset)
+        end
+    end
+
+    function shooting.shoot1(obj, y)
         local bulletSize = shooting.bullets.size
         shooting.bullets.createBullet(
-            player.collider.x + player.collider.w / 2 + player.collider.w / 2 * player.lookDir - bulletSize.x, 
-            player.collider.y + player.collider.h / 2 - bulletSize.y - 4, createVec(player.lookDir, 0))
+            obj.collider.x + obj.collider.w / 2 + obj.collider.w / 2 * obj.lookDir - bulletSize.x, 
+            obj.collider.y + obj.collider.h / 2 + bulletSize.y / 2 - y, createVec(obj.lookDir, 0))
+        shooting.canShoot = false
+        shooting.inShoot = true
+    end
+
+    function shooting.shoot2(obj, y)
+        local bulletSize = shooting.bullets.size
+        shooting.bullets.createBullet(
+            obj.collider.x + obj.collider.w / 2 + obj.collider.w / 2 * obj.lookDir - bulletSize.x, 
+            obj.collider.y + obj.collider.h / 2 - bulletSize.y / 2 - y, createVec(obj.lookDir, 0))
+
+            shooting.bullets.createBullet(
+            obj.collider.x + obj.collider.w / 2 + obj.collider.w / 2 * obj.lookDir - bulletSize.x, 
+            obj.collider.y + obj.collider.h / 2 + bulletSize.y * 1.5, createVec(obj.lookDir, 0))
+        shooting.canShoot = false
+        shooting.inShoot = true
+    end
+
+    function shooting.shoot3(obj, y)
+        local bulletSize = shooting.bullets.size
+        shooting.bullets.createBullet(
+            obj.collider.x + obj.collider.w / 2 + obj.collider.w / 2 * obj.lookDir - bulletSize.x, 
+            obj.collider.y + obj.collider.h / 2 - bulletSize.y * 1.5 - y, createVec(obj.lookDir, 0))
+
+            shooting.bullets.createBullet(
+            obj.collider.x + obj.collider.w / 2 + obj.collider.w / 2 * obj.lookDir - bulletSize.x, 
+            obj.collider.y + obj.collider.h / 2 + bulletSize.y / 2 - y, createVec(obj.lookDir, 0))
+            
+            shooting.bullets.createBullet(
+                obj.collider.x + obj.collider.w / 2 + obj.collider.w / 2 * obj.lookDir - bulletSize.x, 
+                obj.collider.y + obj.collider.h / 2 + bulletSize.y * 2.5, createVec(obj.lookDir, 0))
         shooting.canShoot = false
         shooting.inShoot = true
     end

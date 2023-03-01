@@ -7,7 +7,7 @@ function createLabel(text)
     label.font = love.graphics.newFont(16)
     label.font:setFilter( "nearest", "nearest" )
     label.text = text
-    label.restartText = "Press SPACE to restart"
+    label.restartText = "Press R to restart"
 
     label.textSize = getTextSize(label.font, label.text)
     label.restartTextSize = getTextSize(label.font, label.restartText)

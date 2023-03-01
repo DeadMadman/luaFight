@@ -23,7 +23,7 @@ function createHealth(hp, text)
     end
     function health.update(dt)
         if health.isDead then
-            if love.keyboard.isDown("space") then
+            if love.keyboard.isDown("r") then
                 love.event.quit('restart')
             end
             return false
@@ -52,7 +52,6 @@ function createHealth(hp, text)
             health.hp = health.hp - 1
             if health.hp <= 0 then
                 health.isDead = true
-                print("isDead")
             end 
         end
     end

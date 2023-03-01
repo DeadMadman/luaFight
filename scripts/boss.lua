@@ -3,13 +3,13 @@ local boss = {}
 boss.collider = createRect(632, 32, 54, 57)
 boss.offset = createVec(boss.collider.w * 0.5, boss.collider.w * 0.5)
 
-boss.speed  = 200
+boss.speed  = 250
 boss.lookDir = -1
 boss.velocity = createVec(0, 0)
 boss.moveTimer = 0
 
 require("scripts/shooting")
-boss.shooting = createShooting("assets/bulletBoss.png", 0.8)
+boss.shooting = createShooting("assets/bulletBoss.png", 0.7)
 require("scripts/health")
 boss.health = createHealth(50, "Bug Dead")
 
@@ -33,7 +33,8 @@ function boss.update(dt)
     end
     boss.shooting.update(dt)
     if boss.shooting.canShoot and not boss.inShoot then
-        boss.shooting.shoot(boss)
+        local num = love.math.random(3)
+        boss.shooting.shoot(boss, num, 0)
     end
 
     local velocity = createVec(0, 0)
