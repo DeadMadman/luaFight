@@ -2,7 +2,7 @@
 
 [---> Download here <---](https://github.com/DeadMadman/luaFight/releases/tag/game)
 
-![image](https://user-images.githubusercontent.com/31730144/222173249-8644fdc7-378d-4b07-a119-25e6b0edaa9e.png)
+![image](https://user-images.githubusercontent.com/31730144/222173869-4a3651e4-72ea-4053-aca7-12ec6a52221e.png)
 
 ## Controls: 
 
