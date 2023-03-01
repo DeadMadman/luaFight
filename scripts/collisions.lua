@@ -21,11 +21,13 @@ end
 
 function collisions.bulletDamageCollision(bullets, other)
     local b = other.collider
-    for index, bullet in pairs(bullets.currentBullets) do
-        local a = bullet.collider
-        if collisions.rectRectIntersect(a, b) then
-            other.onCollisionBullet(true)
-            bullets.onCollision(index)
+    if not other.health.isDead then
+        for index, bullet in pairs(bullets.currentBullets) do
+            local a = bullet.collider
+            if collisions.rectRectIntersect(a, b) then
+                other.onCollisionBullet(true)
+                bullets.onCollision(index)
+            end
         end
     end
 end

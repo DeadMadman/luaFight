@@ -85,7 +85,8 @@ function map.createMap()
     map.bg.spriteSheet = love.graphics.newImage("assets/bg.png")
     map.bg.spriteSheet:setFilter("nearest", "nearest")
     map.bg.spriteSheet:setWrap("repeat", "repeat")
-    map.bg.quad = love.graphics.newQuad(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), map.bg.spriteSheet:getDimensions())
+    map.bg.offset = 200
+    map.bg.quad = love.graphics.newQuad(0, 0, love.graphics.getWidth() + map.bg.offset, love.graphics.getHeight(), map.bg.spriteSheet:getDimensions())
 
     map.createLayer(map.collision, map.collidableTiles)
     map.createLayer(map.decoration, map.decorationTiles)
@@ -104,8 +105,12 @@ function map.createLayer(layer, list)
     end
 end
 
-function map.draw()
-    love.graphics.draw(map.bg.spriteSheet, map.bg.quad)
+function map.draw() 
+    local col = 0.5
+    love.graphics.setColor(col, col - 0.06, col + 0.06, 1)
+    love.graphics.draw(map.bg.spriteSheet, map.bg.quad, -map.bg.offset, 0)
+    love.graphics.setColor(1, 1, 1, 1)
+
     for _, tile in pairs(map.backgroundTiles) do
         tile.drawTile(tile)
     end
